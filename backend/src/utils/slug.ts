@@ -190,3 +190,11 @@ export function generateSlugSuggestions(url: string): string[] {
     ];
   }
 }
+
+/**
+ * Generate a unique slug (simplified wrapper)
+ * Used for bulk import and other operations
+ */
+export async function generateSlug(env: any): Promise<string> {
+  return await generateSlugWithRetry(env.LINKS_KV);
+}

@@ -83,11 +83,20 @@ export default function DashboardPage() {
             </Link>
           </div>
           <nav className="flex items-center space-x-4">
+            <Link href="/create" className="text-gray-300 hover:text-white transition-colors">
+              ➕ Create Link
+            </Link>
+            <Link href="/import-export" className="text-gray-300 hover:text-white transition-colors">
+              📦 Import/Export
+            </Link>
             <Link href="/domains" className="text-gray-300 hover:text-white transition-colors">
               🌐 Domains
             </Link>
             <Link href="/apikeys" className="text-gray-300 hover:text-white transition-colors">
               🔑 API Keys
+            </Link>
+            <Link href="/webhooks" className="text-gray-300 hover:text-white transition-colors">
+              🪝 Webhooks
             </Link>
             <span className="text-gray-400">
               {user.email}

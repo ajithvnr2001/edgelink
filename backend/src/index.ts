@@ -16,6 +16,10 @@ import { handleAddDomain, handleVerifyDomain, handleGetDomains, handleDeleteDoma
 import { handleGenerateAPIKey, handleGetAPIKeys, handleRevokeAPIKey } from './handlers/apikeys';
 import { handleGetLinks, handleUpdateLink, handleDeleteLink, handleGenerateQR } from './handlers/links';
 import { handleCreateWebhook, handleGetWebhooks, handleDeleteWebhook } from './handlers/webhooks';
+import { handleSuggestSlug } from './handlers/slug-suggestions';
+import { handleLinkPreview } from './handlers/link-preview';
+import { handleExportAnalytics, handleExportLinks } from './handlers/export';
+import { handleBulkImport } from './handlers/bulk-import';
 
 /**
  * Main worker fetch handler
@@ -316,6 +320,57 @@ export default {
 
         const webhookId = path.split('/')[3];
         const response = await handleDeleteWebhook(env, user.sub, webhookId);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // Week 5 Features
+
+      // POST /api/suggest-slug - AI slug suggestions (authenticated optional)
+      if (path === '/api/suggest-slug' && method === 'POST') {
+        const response = await handleSuggestSlug(request, env);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // POST /api/preview - Link preview with Open Graph
+      if (path === '/api/preview' && method === 'POST') {
+        const response = await handleLinkPreview(request, env);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // GET /api/export/analytics/:slug - Export analytics
+      if (path.startsWith('/api/export/analytics/') && method === 'GET') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const slug = path.split('/')[4];
+        const format = (url.searchParams.get('format') as 'csv' | 'json') || 'json';
+        const timeRange = (url.searchParams.get('range') as '7d' | '30d' | '90d' | 'all') || '30d';
+        const response = await handleExportAnalytics(env, user.sub, slug, format, timeRange);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // GET /api/export/links - Export all user links
+      if (path === '/api/export/links' && method === 'GET') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const format = (url.searchParams.get('format') as 'csv' | 'json') || 'json';
+        const response = await handleExportLinks(env, user.sub, format);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // POST /api/import/links - Bulk import links from CSV
+      if (path === '/api/import/links' && method === 'POST') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleBulkImport(request, env, user.sub, user.plan);
         return addCorsHeaders(response, corsHeaders);
       }
 
