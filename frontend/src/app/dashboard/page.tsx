@@ -83,6 +83,12 @@ export default function DashboardPage() {
             </Link>
           </div>
           <nav className="flex items-center space-x-4">
+            <Link href="/domains" className="text-gray-300 hover:text-white transition-colors">
+              🌐 Domains
+            </Link>
+            <Link href="/apikeys" className="text-gray-300 hover:text-white transition-colors">
+              🔑 API Keys
+            </Link>
             <span className="text-gray-400">
               {user.email}
             </span>

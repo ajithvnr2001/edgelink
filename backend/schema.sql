@@ -85,6 +85,19 @@ CREATE TABLE IF NOT EXISTS webhooks (
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+-- API Keys table: Long-lived API authentication tokens (Week 3)
+CREATE TABLE IF NOT EXISTS api_keys (
+  key_id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  key_prefix TEXT NOT NULL, -- First 11 chars for display (elk_xxxxxxx)
+  key_hash TEXT NOT NULL, -- Hashed full key
+  name TEXT NOT NULL, -- User-defined key name
+  last_used_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
 -- Indexes for performance optimization
 CREATE INDEX IF NOT EXISTS idx_user_links ON links(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_domains ON custom_domains(user_id);
@@ -93,6 +106,8 @@ CREATE INDEX IF NOT EXISTS idx_usage_tracking_user ON usage_tracking(user_id, me
 CREATE INDEX IF NOT EXISTS idx_links_expires_at ON links(expires_at);
 CREATE INDEX IF NOT EXISTS idx_anonymous_links_expires_at ON anonymous_links(expires_at);
 CREATE INDEX IF NOT EXISTS idx_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_api_keys_user ON api_keys(user_id);
+CREATE INDEX IF NOT EXISTS idx_api_keys_prefix ON api_keys(key_prefix);
 
 -- Triggers for updated_at timestamp
 CREATE TRIGGER IF NOT EXISTS update_users_timestamp

@@ -252,3 +252,72 @@ export async function getLinkAnalytics(slug: string, range: '7d' | '30d' = '7d')
 export async function getAnalyticsSummary() {
   return apiRequest('/api/analytics/summary')
 }
+
+/**
+ * Week 3: Custom Domains API Functions
+ */
+
+/**
+ * Get user's custom domains
+ */
+export async function getDomains() {
+  return apiRequest('/api/domains')
+}
+
+/**
+ * Add a new custom domain
+ */
+export async function addDomain(domainName: string) {
+  return apiRequest('/api/domains', {
+    method: 'POST',
+    body: JSON.stringify({ domain_name: domainName }),
+  })
+}
+
+/**
+ * Verify domain ownership
+ */
+export async function verifyDomain(domainId: string) {
+  return apiRequest(`/api/domains/${domainId}/verify`, {
+    method: 'POST',
+  })
+}
+
+/**
+ * Delete a custom domain
+ */
+export async function deleteDomain(domainId: string) {
+  return apiRequest(`/api/domains/${domainId}`, {
+    method: 'DELETE',
+  })
+}
+
+/**
+ * Week 3: API Keys Management Functions
+ */
+
+/**
+ * Get user's API keys
+ */
+export async function getAPIKeys() {
+  return apiRequest('/api/keys')
+}
+
+/**
+ * Generate a new API key
+ */
+export async function generateAPIKey(name: string = 'API Key') {
+  return apiRequest('/api/keys', {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  })
+}
+
+/**
+ * Revoke an API key
+ */
+export async function revokeAPIKey(keyId: string) {
+  return apiRequest(`/api/keys/${keyId}`, {
+    method: 'DELETE',
+  })
+}
