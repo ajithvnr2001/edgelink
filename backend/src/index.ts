@@ -11,6 +11,7 @@ import { checkRateLimit, addRateLimitHeaders } from './middleware/ratelimit';
 import { handleShorten } from './handlers/shorten';
 import { handleRedirect } from './handlers/redirect';
 import { handleSignup, handleLogin, handleRefresh, handleLogout } from './handlers/auth';
+import { handleGetProfile, handleUpdateProfile, handleDeleteAccount, handleRequestAccountDeletion, handleCancelAccountDeletion, handleExportUserData } from './handlers/user';
 import { handleGetAnalytics, handleGetAnalyticsSummary } from './handlers/analytics';
 import { handleAddDomain, handleVerifyDomain, handleGetDomains, handleDeleteDomain } from './handlers/domains';
 import { handleGenerateAPIKey, handleGetAPIKeys, handleRevokeAPIKey } from './handlers/apikeys';
@@ -371,6 +372,73 @@ export default {
         }
 
         const response = await handleBulkImport(request, env, user.sub, user.plan);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // User Profile endpoints
+      // GET /api/user/profile - Get user profile
+      if (path === '/api/user/profile' && method === 'GET') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleGetProfile(request, env, user.sub);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // PUT /api/user/profile - Update user profile
+      if (path === '/api/user/profile' && method === 'PUT') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleUpdateProfile(request, env, user.sub);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // POST /api/user/delete - Delete account (immediate)
+      if (path === '/api/user/delete' && method === 'POST') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleDeleteAccount(request, env, user.sub);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // POST /api/user/request-deletion - Request account deletion (30-day grace period)
+      if (path === '/api/user/request-deletion' && method === 'POST') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleRequestAccountDeletion(request, env, user.sub);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // POST /api/user/cancel-deletion - Cancel account deletion request
+      if (path === '/api/user/cancel-deletion' && method === 'POST') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleCancelAccountDeletion(request, env, user.sub);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // GET /api/user/export - Export user data (GDPR)
+      if (path === '/api/user/export' && method === 'GET') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleExportUserData(request, env, user.sub);
         return addCorsHeaders(response, corsHeaders);
       }
 

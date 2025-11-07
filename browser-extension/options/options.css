@@ -333,6 +333,34 @@ button {
   text-decoration: underline;
 }
 
+/* Danger Zone */
+.danger-zone {
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--error-color);
+  border-radius: 6px;
+}
+
+.danger-zone h3 {
+  font-size: 16px;
+  color: var(--error-color);
+  margin-bottom: 8px;
+}
+
+.danger-btn {
+  padding: 10px 16px;
+  background: var(--error-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.danger-btn:hover {
+  background: #DC2626;
+}
+
 /* Utilities */
 .hidden {
   display: none !important;
