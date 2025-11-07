@@ -184,3 +184,69 @@ AFTER UPDATE ON teams
 BEGIN
   UPDATE teams SET updated_at = CURRENT_TIMESTAMP WHERE team_id = NEW.team_id;
 END;
+
+-- Week 7: A/B Testing & Analytics Archiving Tables
+
+-- A/B Tests table: Split testing configuration
+CREATE TABLE IF NOT EXISTS ab_tests (
+  test_id TEXT PRIMARY KEY,
+  slug TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  test_name TEXT NOT NULL,
+  variant_a_url TEXT NOT NULL,
+  variant_b_url TEXT NOT NULL,
+  status TEXT CHECK(status IN ('active', 'paused', 'completed')) DEFAULT 'active',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  started_at TIMESTAMP,
+  ended_at TIMESTAMP,
+  winner TEXT CHECK(winner IN ('a', 'b', 'none')) DEFAULT 'none',
+  FOREIGN KEY (slug) REFERENCES links(slug) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- A/B Test Events table: Track variant interactions
+CREATE TABLE IF NOT EXISTS ab_test_events (
+  event_id TEXT PRIMARY KEY,
+  test_id TEXT NOT NULL,
+  variant TEXT CHECK(variant IN ('a', 'b')) NOT NULL,
+  visitor_hash TEXT NOT NULL,
+  event_type TEXT CHECK(event_type IN ('click', 'conversion')) DEFAULT 'click',
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (test_id) REFERENCES ab_tests(test_id) ON DELETE CASCADE
+);
+
+-- Analytics Archive table: Long-term analytics storage
+CREATE TABLE IF NOT EXISTS analytics_archive (
+  archive_id TEXT PRIMARY KEY,
+  slug TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  date TEXT NOT NULL, -- YYYY-MM-DD format
+  total_clicks INTEGER DEFAULT 0,
+  unique_visitors INTEGER DEFAULT 0,
+  top_country TEXT,
+  top_device TEXT,
+  top_browser TEXT,
+  top_referrer TEXT,
+  archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(slug, date),
+  FOREIGN KEY (slug) REFERENCES links(slug) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Indexes for Week 7 tables
+CREATE INDEX IF NOT EXISTS idx_ab_tests_slug ON ab_tests(slug);
+CREATE INDEX IF NOT EXISTS idx_ab_tests_user ON ab_tests(user_id);
+CREATE INDEX IF NOT EXISTS idx_ab_tests_status ON ab_tests(status);
+CREATE INDEX IF NOT EXISTS idx_ab_test_events_test ON ab_test_events(test_id);
+CREATE INDEX IF NOT EXISTS idx_ab_test_events_visitor ON ab_test_events(visitor_hash);
+CREATE INDEX IF NOT EXISTS idx_analytics_archive_slug ON analytics_archive(slug);
+CREATE INDEX IF NOT EXISTS idx_analytics_archive_user ON analytics_archive(user_id);
+CREATE INDEX IF NOT EXISTS idx_analytics_archive_date ON analytics_archive(date);
+
+-- Triggers for Week 7 tables
+CREATE TRIGGER IF NOT EXISTS update_ab_tests_timestamp
+AFTER UPDATE ON ab_tests
+BEGIN
+  UPDATE ab_tests SET updated_at = CURRENT_TIMESTAMP WHERE test_id = NEW.test_id;
+END;
