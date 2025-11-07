@@ -130,3 +130,57 @@ AFTER UPDATE ON links
 BEGIN
   UPDATE links SET updated_at = CURRENT_TIMESTAMP WHERE slug = NEW.slug;
 END;
+
+-- Week 6: Team Collaboration Tables
+
+-- Teams table: Team information
+CREATE TABLE IF NOT EXISTS teams (
+  team_id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  plan TEXT DEFAULT 'pro' CHECK(plan IN ('free', 'pro')),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (owner_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Team members table: User membership in teams
+CREATE TABLE IF NOT EXISTS team_members (
+  member_id TEXT PRIMARY KEY,
+  team_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  role TEXT CHECK(role IN ('owner', 'admin', 'member')) NOT NULL,
+  status TEXT CHECK(status IN ('active', 'pending', 'suspended')) DEFAULT 'active',
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  UNIQUE(team_id, user_id)
+);
+
+-- Team invitations table: Pending team invitations
+CREATE TABLE IF NOT EXISTS team_invitations (
+  invitation_id TEXT PRIMARY KEY,
+  team_id TEXT NOT NULL,
+  email TEXT NOT NULL,
+  role TEXT CHECK(role IN ('admin', 'member')) NOT NULL,
+  invited_by TEXT NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  status TEXT CHECK(status IN ('pending', 'accepted', 'expired', 'cancelled')) DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
+  FOREIGN KEY (invited_by) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Indexes for team tables
+CREATE INDEX IF NOT EXISTS idx_team_members_user ON team_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_team_members_team ON team_members(team_id);
+CREATE INDEX IF NOT EXISTS idx_team_invitations_email ON team_invitations(email);
+CREATE INDEX IF NOT EXISTS idx_team_invitations_team ON team_invitations(team_id);
+CREATE INDEX IF NOT EXISTS idx_teams_owner ON teams(owner_id);
+
+-- Triggers for team tables
+CREATE TRIGGER IF NOT EXISTS update_teams_timestamp
+AFTER UPDATE ON teams
+BEGIN
+  UPDATE teams SET updated_at = CURRENT_TIMESTAMP WHERE team_id = NEW.team_id;
+END;
