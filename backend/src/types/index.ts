@@ -68,8 +68,11 @@ export interface LinkKVValue {
   geo_routing?: Record<string, string>;
   referrer_routing?: Record<string, string>;
   expires_at?: number;
+  max_clicks?: number;
+  click_count?: number;
   password_hash?: string;
   utm_template?: string;
+  utm_params?: string;
   metadata?: Record<string, any>;
   ab_testing?: {
     variant_a: string;
