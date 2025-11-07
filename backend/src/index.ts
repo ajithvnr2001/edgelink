@@ -14,6 +14,8 @@ import { handleSignup, handleLogin, handleRefresh, handleLogout } from './handle
 import { handleGetAnalytics, handleGetAnalyticsSummary } from './handlers/analytics';
 import { handleAddDomain, handleVerifyDomain, handleGetDomains, handleDeleteDomain } from './handlers/domains';
 import { handleGenerateAPIKey, handleGetAPIKeys, handleRevokeAPIKey } from './handlers/apikeys';
+import { handleGetLinks, handleUpdateLink, handleDeleteLink, handleGenerateQR } from './handlers/links';
+import { handleCreateWebhook, handleGetWebhooks, handleDeleteWebhook } from './handlers/webhooks';
 
 /**
  * Main worker fetch handler
@@ -126,20 +128,20 @@ export default {
         return addCorsHeaders(finalResponse, corsHeaders);
       }
 
-      // Update link (authenticated)
-      if (path.startsWith('/api/links/') && method === 'PUT') {
+      // Update link (authenticated) - Week 4 Enhanced
+      if (path.startsWith('/api/links/') && !path.includes('/qr') && method === 'PUT') {
         const { user, error } = await requireAuth(request, env);
         if (error) {
           return addCorsHeaders(error, corsHeaders);
         }
 
         const slug = path.split('/')[3];
-        const response = await handleUpdateLink(request, env, user.sub, slug);
+        const response = await handleUpdateLink(request, env, user.sub, slug, user.plan);
         return addCorsHeaders(response, corsHeaders);
       }
 
       // Delete link (authenticated)
-      if (path.startsWith('/api/links/') && method === 'DELETE') {
+      if (path.startsWith('/api/links/') && !path.includes('/qr') && method === 'DELETE') {
         const { user, error } = await requireAuth(request, env);
         if (error) {
           return addCorsHeaders(error, corsHeaders);
@@ -147,6 +149,19 @@ export default {
 
         const slug = path.split('/')[3];
         const response = await handleDeleteLink(env, user.sub, slug);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // Generate QR code (authenticated, Pro only) - Week 4
+      if (path.startsWith('/api/links/') && path.endsWith('/qr') && method === 'GET') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const slug = path.split('/')[3];
+        const format = (url.searchParams.get('format') as 'svg' | 'png') || 'svg';
+        const response = await handleGenerateQR(env, user.sub, slug, user.plan, format);
         return addCorsHeaders(response, corsHeaders);
       }
 
@@ -266,6 +281,41 @@ export default {
 
         const keyId = path.split('/')[3];
         const response = await handleRevokeAPIKey(env, user.sub, keyId);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // Webhooks endpoints (Week 4)
+      // POST /api/webhooks - Create new webhook
+      if (path === '/api/webhooks' && method === 'POST') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleCreateWebhook(request, env, user.sub, user.plan);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // GET /api/webhooks - Get user's webhooks
+      if (path === '/api/webhooks' && method === 'GET') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleGetWebhooks(env, user.sub);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // DELETE /api/webhooks/:webhookId - Delete webhook
+      if (path.startsWith('/api/webhooks/') && method === 'DELETE') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const webhookId = path.split('/')[3];
+        const response = await handleDeleteWebhook(env, user.sub, webhookId);
         return addCorsHeaders(response, corsHeaders);
       }
 

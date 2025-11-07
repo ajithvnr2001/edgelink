@@ -33,9 +33,17 @@ export async function handleRedirect(
 
     const linkData: LinkKVValue = JSON.parse(linkDataStr);
 
-    // Check expiration
+    // Check time-based expiration
     if (linkData.expires_at && Date.now() > linkData.expires_at) {
       return new Response('Link expired', {
+        status: 410,
+        headers: { 'Content-Type': 'text/plain' }
+      });
+    }
+
+    // Check click-count expiration (max_clicks)
+    if (linkData.max_clicks && linkData.click_count >= linkData.max_clicks) {
+      return new Response('Link has reached maximum click limit', {
         status: 410,
         headers: { 'Content-Type': 'text/plain' }
       });

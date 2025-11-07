@@ -29,6 +29,11 @@ CREATE TABLE IF NOT EXISTS links (
   click_count INTEGER DEFAULT 0,
   password_hash TEXT,
   utm_template TEXT,
+  device_routing TEXT, -- JSON: {"mobile": "url", "desktop": "url", "tablet": "url"}
+  geo_routing TEXT, -- JSON: {"US": "url", "IN": "url", "default": "url"}
+  referrer_routing TEXT, -- JSON: {"twitter.com": "url", "linkedin.com": "url", "default": "url"}
+  ab_testing TEXT, -- JSON: {"variant_a": "url", "variant_b": "url", "split": 50}
+  utm_params TEXT, -- UTM parameters to auto-append
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
@@ -79,8 +84,12 @@ CREATE TABLE IF NOT EXISTS webhooks (
   webhook_id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL,
   url TEXT NOT NULL,
+  name TEXT NOT NULL,
   events TEXT NOT NULL, -- JSON array of event types
+  secret TEXT NOT NULL, -- HMAC secret for signature verification
+  slug TEXT, -- Specific link slug (NULL = all links)
   active BOOLEAN DEFAULT TRUE,
+  last_triggered_at TIMESTAMP,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
