@@ -12,6 +12,8 @@ import { handleShorten } from './handlers/shorten';
 import { handleRedirect } from './handlers/redirect';
 import { handleSignup, handleLogin, handleRefresh, handleLogout } from './handlers/auth';
 import { handleGetAnalytics, handleGetAnalyticsSummary } from './handlers/analytics';
+import { handleAddDomain, handleVerifyDomain, handleGetDomains, handleDeleteDomain } from './handlers/domains';
+import { handleGenerateAPIKey, handleGetAPIKeys, handleRevokeAPIKey } from './handlers/apikeys';
 
 /**
  * Main worker fetch handler
@@ -182,6 +184,88 @@ export default {
         }
 
         const response = await handleGetAnalyticsSummary(env, user.sub);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // Custom Domains endpoints (Week 3)
+      // POST /api/domains - Add a new custom domain
+      if (path === '/api/domains' && method === 'POST') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleAddDomain(request, env, user.sub, user.plan);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // GET /api/domains - Get user's domains
+      if (path === '/api/domains' && method === 'GET') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleGetDomains(env, user.sub);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // POST /api/domains/:domainId/verify - Verify domain ownership
+      if (path.startsWith('/api/domains/') && path.endsWith('/verify') && method === 'POST') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const domainId = path.split('/')[3];
+        const response = await handleVerifyDomain(env, user.sub, domainId);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // DELETE /api/domains/:domainId - Delete domain
+      if (path.startsWith('/api/domains/') && path.split('/').length === 4 && method === 'DELETE') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const domainId = path.split('/')[3];
+        const response = await handleDeleteDomain(env, user.sub, domainId);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // API Keys endpoints (Week 3)
+      // POST /api/keys - Generate new API key
+      if (path === '/api/keys' && method === 'POST') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleGenerateAPIKey(request, env, user.sub);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // GET /api/keys - Get user's API keys
+      if (path === '/api/keys' && method === 'GET') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleGetAPIKeys(env, user.sub);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // DELETE /api/keys/:keyId - Revoke API key
+      if (path.startsWith('/api/keys/') && method === 'DELETE') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const keyId = path.split('/')[3];
+        const response = await handleRevokeAPIKey(env, user.sub, keyId);
         return addCorsHeaders(response, corsHeaders);
       }
 

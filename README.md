@@ -37,14 +37,25 @@ A fast, affordable URL shortener built on Cloudflare's edge network with enterpr
 - [x] Top referrers tracking
 - [x] Time range filtering (7d/30d)
 
-### Coming Soon (Weeks 3-12)
+### Week 3 Features ✅
+- [x] Custom domain management with DNS verification
+- [x] SSL provisioning documentation
+- [x] API key generation and management
+- [x] Domain limit enforcement (Free: 1, Pro: 5)
+- [x] API key limit enforcement (Max: 5 per user)
+- [x] URL safety checking (abuse prevention)
+- [x] Email verification structure
+- [x] Rate limiting for sensitive operations
+- [x] Input sanitization utilities
+
+### Coming Soon (Weeks 4-12)
 - [ ] MapBox geographic heatmap integration
-- [ ] Custom domain management
 - [ ] QR code generation (Pro)
 - [ ] Webhooks
 - [ ] Advanced analytics export (CSV/JSON)
-- [ ] API key management
 - [ ] Browser extension
+- [ ] Email service integration (Resend/SendGrid)
+- [ ] Google Safe Browsing API integration
 
 ## 📁 Project Structure
 
@@ -346,10 +357,12 @@ curl -X POST http://localhost:8787/api/shorten \
 - Geographic distribution
 - Top referrers tracking
 
-### Week 3
+### Week 3 ✅ Completed
 - Custom domain management
 - SSL provisioning
 - Domain verification
+- API key generation
+- Security utilities
 
 ### Week 4 (MVP Launch)
 - QR code generation
@@ -393,6 +406,6 @@ Built with ❤️ by the EdgeLink team
 
 ---
 
-**Status**: Week 1 MVP Complete ✅
-**Next Milestone**: Week 2 Analytics Dashboard
+**Status**: Week 3 Complete ✅
+**Next Milestone**: Week 4 Polish + Launch
 **Target Launch**: Week 4 (ProductHunt)
