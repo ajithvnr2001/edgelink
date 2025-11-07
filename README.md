@@ -27,12 +27,22 @@ A fast, affordable URL shortener built on Cloudflare's edge network with enterpr
 - ✅ Password-protected links
 - ✅ Link expiration
 
-### Coming Soon (Weeks 2-12)
-- [ ] Real-time analytics dashboard
+### Week 2 Features ✅
+- [x] Analytics dashboard with comprehensive charts
+- [x] Time series line charts (clicks over time)
+- [x] Device breakdown pie charts
+- [x] Browser distribution bar charts
+- [x] Geographic distribution (country-based)
+- [x] Operating system analytics
+- [x] Top referrers tracking
+- [x] Time range filtering (7d/30d)
+
+### Coming Soon (Weeks 3-12)
+- [ ] MapBox geographic heatmap integration
 - [ ] Custom domain management
 - [ ] QR code generation (Pro)
 - [ ] Webhooks
-- [ ] Advanced analytics export
+- [ ] Advanced analytics export (CSV/JSON)
 - [ ] API key management
 - [ ] Browser extension
 
@@ -328,10 +338,13 @@ curl -X POST http://localhost:8787/api/shorten \
 - Rate limiting
 - Basic dashboard
 
-### Week 2 (In Progress)
+### Week 2 ✅ Completed
 - Analytics dashboard with charts
-- Real-time click tracking
-- Geographic heatmap
+- Real-time click tracking queries
+- Time series visualizations
+- Device/browser/OS breakdowns
+- Geographic distribution
+- Top referrers tracking
 
 ### Week 3
 - Custom domain management

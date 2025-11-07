@@ -18,7 +18,8 @@
     "react-dom": "^18.3.1",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
-    "clsx": "^2.1.1"
+    "clsx": "^2.1.1",
+    "recharts": "^2.10.3"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.5",
