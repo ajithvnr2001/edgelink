@@ -233,8 +233,22 @@ export async function deleteLink(slug: string) {
 }
 
 /**
- * Get link stats
+ * Get link stats (legacy)
  */
 export async function getLinkStats(slug: string) {
   return apiRequest(`/api/stats/${slug}`)
+}
+
+/**
+ * Get detailed analytics for a link
+ */
+export async function getLinkAnalytics(slug: string, range: '7d' | '30d' = '7d') {
+  return apiRequest(`/api/analytics/${slug}?range=${range}`)
+}
+
+/**
+ * Get analytics summary for user
+ */
+export async function getAnalyticsSummary() {
+  return apiRequest('/api/analytics/summary')
 }

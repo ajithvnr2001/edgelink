@@ -189,10 +189,10 @@ export default function DashboardPage() {
                     {/* Actions */}
                     <div className="flex items-center space-x-2 ml-4">
                       <Link
-                        href={`/dashboard/links/${link.slug}/stats`}
+                        href={`/analytics/${link.slug}`}
                         className="btn-secondary text-sm"
                       >
-                        Stats
+                        📊 Analytics
                       </Link>
                       <button
                         onClick={() => handleDelete(link.slug)}

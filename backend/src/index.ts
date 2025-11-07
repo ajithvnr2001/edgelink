@@ -11,6 +11,7 @@ import { checkRateLimit, addRateLimitHeaders } from './middleware/ratelimit';
 import { handleShorten } from './handlers/shorten';
 import { handleRedirect } from './handlers/redirect';
 import { handleSignup, handleLogin, handleRefresh, handleLogout } from './handlers/auth';
+import { handleGetAnalytics, handleGetAnalyticsSummary } from './handlers/analytics';
 
 /**
  * Main worker fetch handler
@@ -147,7 +148,7 @@ export default {
         return addCorsHeaders(response, corsHeaders);
       }
 
-      // Get link stats (authenticated)
+      // Get link stats (authenticated) - Legacy endpoint
       if (path.startsWith('/api/stats/') && method === 'GET') {
         const { user, error } = await requireAuth(request, env);
         if (error) {
@@ -156,6 +157,31 @@ export default {
 
         const slug = path.split('/')[3];
         const response = await handleGetStats(env, user.sub, slug);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // Get detailed analytics for a link (authenticated)
+      if (path.startsWith('/api/analytics/') && path.split('/').length === 4 && method === 'GET') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const slug = path.split('/')[3];
+        const url = new URL(request.url);
+        const timeRange = (url.searchParams.get('range') as '7d' | '30d') || '7d';
+        const response = await handleGetAnalytics(env, user.sub, slug, timeRange);
+        return addCorsHeaders(response, corsHeaders);
+      }
+
+      // Get analytics summary (authenticated)
+      if (path === '/api/analytics/summary' && method === 'GET') {
+        const { user, error } = await requireAuth(request, env);
+        if (error) {
+          return addCorsHeaders(error, corsHeaders);
+        }
+
+        const response = await handleGetAnalyticsSummary(env, user.sub);
         return addCorsHeaders(response, corsHeaders);
       }
 
