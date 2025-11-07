@@ -47,6 +47,11 @@ function setupEventListeners() {
   exportSettingsBtn.addEventListener('click', exportSettings);
   importSettingsBtn.addEventListener('click', importSettings);
 
+  // Account management actions
+  document.getElementById('export-data-btn').addEventListener('click', exportUserData);
+  document.getElementById('schedule-delete-btn').addEventListener('click', scheduleAccountDeletion);
+  document.getElementById('delete-account-btn').addEventListener('click', deleteAccountImmediately);
+
   // Auto-save on certain changes
   apiUrlInput.addEventListener('change', () => {
     api.setBaseURL(apiUrlInput.value.trim() || 'https://edgelink.io');
@@ -258,6 +263,93 @@ function showSaveStatus(message, type) {
   setTimeout(() => {
     saveStatus.className = 'save-status';
   }, 3000);
+}
+
+/**
+ * Export user data
+ */
+async function exportUserData() {
+  if (!api.isAuthenticated()) {
+    showSaveStatus('Please login first', 'error');
+    return;
+  }
+
+  try {
+    const data = await api.exportUserData();
+
+    // Download as JSON file
+    const dataStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `edgelink-data-${Date.now()}.json`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+    showSaveStatus('Data exported successfully', 'success');
+  } catch (error) {
+    showSaveStatus('Failed to export data', 'error');
+  }
+}
+
+/**
+ * Schedule account deletion
+ */
+async function scheduleAccountDeletion() {
+  if (!api.isAuthenticated()) {
+    showSaveStatus('Please login first', 'error');
+    return;
+  }
+
+  const reason = prompt('Optional: Why are you leaving? (This helps us improve)');
+
+  if (!confirm('Are you sure you want to schedule your account for deletion in 30 days? You can cancel anytime before then.')) {
+    return;
+  }
+
+  try {
+    const result = await api.requestAccountDeletion(reason || '');
+    alert(`Account deletion scheduled for ${new Date(result.deletion_scheduled_for).toLocaleDateString()}. You have a 30-day grace period to cancel.`);
+    showSaveStatus('Deletion scheduled successfully', 'success');
+  } catch (error) {
+    showSaveStatus('Failed to schedule deletion', 'error');
+  }
+}
+
+/**
+ * Delete account immediately
+ */
+async function deleteAccountImmediately() {
+  if (!api.isAuthenticated()) {
+    showSaveStatus('Please login first', 'error');
+    return;
+  }
+
+  const password = prompt('Enter your password to confirm account deletion:');
+  if (!password) {
+    return;
+  }
+
+  const confirmation = prompt('Type "DELETE MY ACCOUNT" to confirm (case sensitive):');
+  if (confirmation !== 'DELETE MY ACCOUNT') {
+    alert('Confirmation failed. Account was not deleted.');
+    return;
+  }
+
+  if (!confirm('⚠️ FINAL WARNING: This will IMMEDIATELY and PERMANENTLY delete your account and ALL data. This cannot be undone. Continue?')) {
+    return;
+  }
+
+  try {
+    await api.deleteAccount(password, confirmation);
+    await api.logout();
+    alert('Your account has been deleted. The extension will now close.');
+    window.close();
+  } catch (error) {
+    showSaveStatus('Failed to delete account: ' + (error.message || 'Unknown error'), 'error');
+  }
 }
 
 // Initialize on load

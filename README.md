@@ -69,6 +69,17 @@ A fast, affordable URL shortener built on Cloudflare's edge network with enterpr
   - Comprehensive settings page
   - See: `browser-extension/README.md`
 
+### Account Management ✅
+- [x] **User Account Deletion**
+  - Immediate account deletion
+  - Scheduled deletion (30-day grace period)
+  - Cancel scheduled deletion
+  - GDPR-compliant data export
+  - Complete data removal (cascade deletes)
+  - Multiple confirmation steps for safety
+  - Available in web dashboard and browser extension
+  - See: `ACCOUNT_DELETION.md`
+
 ### Coming Soon
 - [ ] MapBox geographic heatmap integration
 - [ ] Email service integration (Resend/SendGrid)
@@ -450,6 +461,17 @@ curl -X POST http://localhost:8787/api/shorten \
   - AI slug suggestions integration
   - Recent links viewer
   - Production ready (v1.0.0)
+
+### Account Management ✅ Completed
+- **User Account Deletion & Data Management**
+  - Immediate deletion (with multiple confirmations)
+  - Scheduled deletion (30-day grace period)
+  - Cancel deletion during grace period
+  - GDPR-compliant data export (JSON)
+  - Complete cascade delete logic
+  - Web dashboard UI (Next.js)
+  - Browser extension integration
+  - Security measures (password + confirmation)
 
 ## 📊 Infrastructure Costs
 

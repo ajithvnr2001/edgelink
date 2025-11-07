@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
   plan TEXT DEFAULT 'free' CHECK(plan IN ('free', 'pro')),
   email_verified BOOLEAN DEFAULT FALSE,
   verification_token TEXT,
+  deletion_requested_at TIMESTAMP,
+  deletion_reason TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_login TIMESTAMP
