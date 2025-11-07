@@ -48,14 +48,33 @@ A fast, affordable URL shortener built on Cloudflare's edge network with enterpr
 - [x] Rate limiting for sensitive operations
 - [x] Input sanitization utilities
 
-### Coming Soon (Weeks 4-12)
+### Week 4-8 Features ✅
+- [x] QR code generation (Pro)
+- [x] Advanced analytics export (CSV/JSON)
+- [x] Webhooks
+- [x] A/B testing
+- [x] Team collaboration
+- [x] Monitoring & alerts
+- [x] Advanced routing features
+
+### Week 9-12 Features ✅
+- [x] **Browser Extension (Chrome/Firefox)**
+  - Instant URL shortening from any page
+  - Context menu integration (right-click)
+  - Keyboard shortcuts (Ctrl+Shift+S)
+  - AI-powered slug suggestions
+  - Recent links viewer
+  - Advanced options (UTM, password, expiration)
+  - Beautiful dark theme UI
+  - Comprehensive settings page
+  - See: `browser-extension/README.md`
+
+### Coming Soon
 - [ ] MapBox geographic heatmap integration
-- [ ] QR code generation (Pro)
-- [ ] Webhooks
-- [ ] Advanced analytics export (CSV/JSON)
-- [ ] Browser extension
 - [ ] Email service integration (Resend/SendGrid)
 - [ ] Google Safe Browsing API integration
+- [ ] Mobile apps (iOS/Android)
+- [ ] Zapier integration
 
 ## 📁 Project Structure
 
@@ -80,6 +99,16 @@ edgelink/
 │   ├── next.config.js
 │   ├── tailwind.config.js
 │   └── package.json
+│
+├── browser-extension/      # Browser Extension (Chrome/Firefox)
+│   ├── manifest.json      # Extension manifest (v3)
+│   ├── popup/             # Popup UI
+│   ├── background/        # Service worker
+│   ├── content/           # Content scripts
+│   ├── options/           # Settings page
+│   ├── lib/               # API client
+│   ├── icons/             # Extension icons
+│   └── README.md          # Extension documentation
 │
 └── shared/                 # Shared types (future)
 ```
@@ -157,7 +186,26 @@ npm run dev
 # Dashboard runs on http://localhost:3000
 ```
 
-### 3. Deploy to Production
+### 3. Browser Extension Setup (Optional)
+
+```bash
+cd browser-extension
+
+# Chrome:
+# 1. Open chrome://extensions/
+# 2. Enable "Developer mode"
+# 3. Click "Load unpacked"
+# 4. Select browser-extension/ folder
+
+# Firefox:
+# 1. Open about:debugging#/runtime/this-firefox
+# 2. Click "Load Temporary Add-on"
+# 3. Select manifest.json
+
+# See browser-extension/README.md for detailed instructions
+```
+
+### 4. Deploy to Production
 
 **Backend (Workers):**
 ```bash
@@ -172,6 +220,12 @@ cd frontend
 npm run pages:build
 npm run pages:deploy
 # Or connect to GitHub for automatic deployments
+```
+
+**Browser Extension:**
+```bash
+# Chrome Web Store & Firefox Add-ons
+# See browser-extension/README.md for publishing guide
 ```
 
 ## 📊 Architecture
@@ -364,19 +418,38 @@ curl -X POST http://localhost:8787/api/shorten \
 - API key generation
 - Security utilities
 
-### Week 4 (MVP Launch)
+### Week 4 ✅ Completed
 - QR code generation
 - Link expiration UI
 - Performance optimization
-- ProductHunt launch
 
-### Weeks 5-12
-- Advanced routing features
-- A/B testing UI
-- Webhooks
-- Browser extension
-- Zapier integration
-- Team collaboration
+### Week 5 ✅ Completed
+- AI slug suggestions
+- Bulk import/export
+- Advanced analytics
+
+### Week 6 ✅ Completed
+- Team collaboration backend
+- Role-based access control
+
+### Week 7 ✅ Completed
+- A/B testing
+- Team management UI
+
+### Week 8 ✅ Completed
+- Monitoring & alerts
+- Advanced analytics
+
+### Weeks 9-12 ✅ Completed
+- **Browser Extension (Chrome/Firefox)**
+  - Popup UI with authentication
+  - Context menus & keyboard shortcuts
+  - Background service worker
+  - Content script with inline notifications
+  - Comprehensive settings page
+  - AI slug suggestions integration
+  - Recent links viewer
+  - Production ready (v1.0.0)
 
 ## 📊 Infrastructure Costs
 
@@ -404,8 +477,51 @@ Proprietary - All rights reserved
 
 Built with ❤️ by the EdgeLink team
 
+## 🌐 Browser Extension
+
+EdgeLink now includes a powerful browser extension for **Chrome** and **Firefox**!
+
+### Features
+- ⚡ **Instant shortening** from any page
+- 🖱️ **Right-click context menu** on any link
+- ⌨️ **Keyboard shortcut**: `Ctrl+Shift+S` (or `Cmd+Shift+S` on Mac)
+- 🤖 **AI-powered slug suggestions**
+- 📊 **Recent links viewer** in popup
+- 🔐 **Authentication** with your EdgeLink account
+- 👤 **Anonymous mode** for quick shortening
+- 🎨 **Beautiful dark theme** UI
+- ⚙️ **Comprehensive settings** page
+- 📋 **Auto-copy** to clipboard
+- 🔔 **Notifications** (browser + inline)
+
+### Installation
+
+**Chrome:**
+1. Download or clone this repository
+2. Open `chrome://extensions/`
+3. Enable "Developer mode"
+4. Click "Load unpacked"
+5. Select the `browser-extension/` folder
+
+**Firefox:**
+1. Download or clone this repository
+2. Open `about:debugging#/runtime/this-firefox`
+3. Click "Load Temporary Add-on"
+4. Select `browser-extension/manifest.json`
+
+For detailed instructions, see [`browser-extension/README.md`](browser-extension/README.md)
+
+### Quick Start
+1. Install the extension
+2. Click the EdgeLink icon in your toolbar
+3. (Optional) Login or continue as guest
+4. Start shortening URLs!
+
+**Keyboard Shortcut**: Press `Ctrl+Shift+S` on any page to instantly shorten the current URL.
+
 ---
 
-**Status**: Week 3 Complete ✅
-**Next Milestone**: Week 4 Polish + Launch
-**Target Launch**: Week 4 (ProductHunt)
+**Status**: Week 12 Complete ✅
+**Current Phase**: Production Ready 🚀
+**Browser Extension**: v1.0.0 ✅
+**Next**: Store Submission (Chrome Web Store & Firefox Add-ons)
