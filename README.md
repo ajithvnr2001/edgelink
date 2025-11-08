@@ -218,26 +218,47 @@ cd browser-extension
 
 ### 4. Deploy to Production
 
-**Backend (Workers):**
+EdgeLink includes comprehensive deployment guides for both development and production environments:
+
+**📘 Development Deployment**: [`DEV_DEPLOYMENT.md`](DEV_DEPLOYMENT.md)
+- Complete guide for deploying to a dev environment
+- Testing and validation procedures
+- Development monitoring setup
+- Quick iteration workflow
+
+**📗 Production Deployment**: [`PROD_DEPLOYMENT.md`](PROD_DEPLOYMENT.md)
+- Production-ready deployment with security hardening
+- SSL/TLS configuration and custom domains
+- Monitoring, alerts, and backup strategies
+- CI/CD pipeline setup
+- Rollback procedures
+
+**Quick Start (Development)**:
 ```bash
+# See DEV_DEPLOYMENT.md for full instructions
 cd backend
-npm run deploy
-# Your worker is live at: https://your-worker.workers.dev
+wrangler deploy --env dev
+
+cd ../frontend
+npm run build
+npx wrangler pages deploy .next --project-name=edgelink-dev --branch=dev
 ```
 
-**Frontend (Pages):**
+**Quick Start (Production)**:
 ```bash
-cd frontend
-npm run pages:build
-npm run pages:deploy
-# Or connect to GitHub for automatic deployments
+# See PROD_DEPLOYMENT.md for full instructions
+cd backend
+wrangler deploy --env production
+
+cd ../frontend
+npm run build
+npx wrangler pages deploy .next --project-name=edgelink --branch=main
 ```
 
-**Browser Extension:**
-```bash
-# Chrome Web Store & Firefox Add-ons
-# See browser-extension/README.md for publishing guide
-```
+**Browser Extension Publishing**:
+- Chrome Web Store: See `PROD_DEPLOYMENT.md` Section 7
+- Firefox Add-ons: See `PROD_DEPLOYMENT.md` Section 7
+- Detailed instructions in `browser-extension/README.md`
 
 ## 📊 Architecture
 
@@ -488,11 +509,18 @@ This is currently a private project. Contributions will be opened after MVP laun
 
 Proprietary - All rights reserved
 
+## 📚 Documentation
+
+- **[Development Deployment Guide](DEV_DEPLOYMENT.md)** - Deploy to dev environment
+- **[Production Deployment Guide](PROD_DEPLOYMENT.md)** - Deploy to production
+- **[Account Deletion Guide](ACCOUNT_DELETION.md)** - User account management
+- **[Browser Extension](browser-extension/README.md)** - Extension documentation
+- **[Week Summaries](WEEK9_SUMMARY.md)** - Development progress (Weeks 9-12)
+
 ## 🔗 Links
 
 - **Frontend**: (To be deployed)
 - **Backend API**: (To be deployed)
-- **Documentation**: Coming soon
 - **Status Page**: Coming soon
 
 ## 👨‍💻 Development Team
