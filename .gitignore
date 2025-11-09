@@ -41,5 +41,10 @@ coverage/
 *.tmp
 .cache/
 
+# Secrets
+.secrets
+*.pem
+*.key
+
 # PRD
 Updated\ Product\ Requirements\ Document\ (PRD)\ 4.1.md
